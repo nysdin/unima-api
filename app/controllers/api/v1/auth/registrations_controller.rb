@@ -1,5 +1,3 @@
-class Api::V1::Auth::RegistrationsController < ApplicationController
-end
 module Api
     module V1
         module Auth 
