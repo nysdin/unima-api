@@ -1,4 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
+    before_action :authenticate_api_user!, only: [:create, :update, :destroy]
 
     def index 
         @products = Product.all
