@@ -34,9 +34,9 @@ class Api::V1::ProductsController < ApplicationController
     def destroy
         product = Product.find_by(id: params[:id])
         if product.destory
-            render json: status: 200
+            render json: { status: 200 }
         else
-            render json: status: unprocessable_entity
+            render json: { status: :unprocessable_entity }
         end
     end
 

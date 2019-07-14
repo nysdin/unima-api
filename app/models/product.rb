@@ -4,4 +4,6 @@ class Product < ApplicationRecord
     validates :state, presence: true, inclusion: { in: %w(new almost_new almost_old old) }
     validates :category, presence: true, inclusion: { in: %w(general humanity science) }
 
+    belongs_to :user
+
 end
