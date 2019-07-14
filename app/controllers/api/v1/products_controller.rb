@@ -8,7 +8,7 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def create 
-        @product = Product.new(product_params)
+        @product = current_api_user.products.build(product_params)
 
         if @product.save 
             render json: @product, status: :created
@@ -24,7 +24,7 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def update
-        @product = Product.find_by(id: params[:id])
+        @product = current_api_user.products.find_by(id: params[:id])
         if @product.update(product_params)
             render json: @product
         else
@@ -33,8 +33,8 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def destroy
-        product = Product.find_by(id: params[:id])
-        if product.destory
+        @product = current_api_user.product.find_by(id: params[:id])
+        if @product.destory
             render json: { status: 200 }
         else
             render json: { status: :unprocessable_entity }
