@@ -20,7 +20,11 @@ class Api::V1::ProductsController < ApplicationController
     def show
         @product = Product.find_by(id: params[:id])
         
-        render json: @product
+        if @product
+            render json: @product
+        else
+            head :not_found 
+        end
     end
 
     def update
