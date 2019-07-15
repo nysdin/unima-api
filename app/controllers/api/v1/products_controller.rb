@@ -13,7 +13,7 @@ class Api::V1::ProductsController < ApplicationController
         if @product.save 
             render json: @product, status: :created
         else
-            render json: product.errors, status: :unprocessable_entity
+            render json: @product.errors, status: :unprocessable_entity
         end
     end
 
@@ -32,16 +32,16 @@ class Api::V1::ProductsController < ApplicationController
         if @product.update(product_params)
             render json: @product
         else
-            render json: product.errors, status: :unprocessable_entity
+            render json: @product.errors, status: :unprocessable_entity
         end
     end
 
     def destroy
-        @product = current_api_user.product.find_by(id: params[:id])
-        if @product.destory
-            render json: { status: 200 }
+        @product = current_api_user.products.find_by(id: params[:id])
+        if @product.destroy
+            render json: @product
         else
-            render json: { status: :unprocessable_entity }
+            head :internal_server_error
         end
     end
 
