@@ -39,6 +39,7 @@ class Api::V1::ProductsController < ApplicationController
 
     def destroy
         @product = current_api_user.products.find_by(id: params[:id])
+
         authorize @product
         if @product.destroy
             render json: @product
