@@ -7,16 +7,6 @@ class Api::V1::ProductsController < ApplicationController
         render json: @products
     end
 
-    def create 
-        @product = current_api_user.products.build(product_params)
-
-        if @product.save 
-            render json: @product, status: :created
-        else
-            render json: @product.errors, status: :unprocessable_entity
-        end
-    end
-
     def show
         @product = Product.find_by(id: params[:id])
         
@@ -27,8 +17,19 @@ class Api::V1::ProductsController < ApplicationController
         end
     end
 
+    def create 
+        @product = current_api_user.products.build(product_params)
+        authorize @product
+        if @product.save 
+            render json: @product, status: :created
+        else
+            render json: @product.errors, status: :unprocessable_entity
+        end
+    end
+
     def update
         @product = current_api_user.products.find_by(id: params[:id])
+        authorize @porudct
         if @product.update(product_params)
             render json: @product
         else
@@ -38,6 +39,7 @@ class Api::V1::ProductsController < ApplicationController
 
     def destroy
         @product = current_api_user.products.find_by(id: params[:id])
+        authorize @product
         if @product.destroy
             render json: @product
         else

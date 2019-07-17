@@ -7,31 +7,23 @@ class ApplicationPolicy
   end
 
   def index?
-    false
+    true
   end
 
   def show?
-    false
+    true
   end
 
   def create?
-    false
-  end
-
-  def new?
-    create?
+    user = record.user
   end
 
   def update?
-    false
-  end
-
-  def edit?
-    update?
+    user = record.user
   end
 
   def destroy?
-    false
+    user = record.user
   end
 
   class Scope
