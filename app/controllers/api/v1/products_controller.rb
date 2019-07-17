@@ -1,5 +1,6 @@
 class Api::V1::ProductsController < ApplicationController
     before_action :authenticate_api_user!, only: [:create, :update, :destroy]
+    before_action :correct_user, only: [:update, :destroy]
 
     def index 
         @products = Product.all
@@ -19,7 +20,7 @@ class Api::V1::ProductsController < ApplicationController
 
     def create 
         @product = current_api_user.products.build(product_params)
-        authorize @product
+
         if @product.save 
             render json: @product, status: :created
         else
@@ -28,8 +29,6 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def update
-        @product = current_api_user.products.find_by(id: params[:id])
-        authorize @porudct
         if @product.update(product_params)
             render json: @product
         else
@@ -38,9 +37,6 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def destroy
-        @product = current_api_user.products.find_by(id: params[:id])
-
-        authorize @product
         if @product.destroy
             render json: @product
         else
@@ -52,5 +48,10 @@ class Api::V1::ProductsController < ApplicationController
 
         def product_params 
             params.permit(:name, :description, :price, :state, :category)
+        end
+
+        def correct_user 
+            @product = current_api_user.products.find_by(id: params[:id])
+            head :forbidden if @product.nil?
         end
 end
