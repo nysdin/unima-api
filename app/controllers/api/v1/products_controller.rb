@@ -47,7 +47,7 @@ class Api::V1::ProductsController < ApplicationController
     private 
 
         def product_params 
-            params.permit(:name, :description, :price, :state, :category)
+            params.permit(:name, :description, :price, :category)
         end
 
         def correct_user 
