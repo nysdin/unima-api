@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_22_130932) do
+ActiveRecord::Schema.define(version: 2019_07_13_120259) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,12 +20,15 @@ ActiveRecord::Schema.define(version: 2019_07_22_130932) do
     t.text "description"
     t.integer "price", null: false
     t.string "state", null: false
-    t.string "category", null: false
-    t.bigint "user_id", null: false
+    t.string "status", default: "open", null: false
+    t.bigint "buyer_id"
+    t.bigint "seller_id"
+    t.datetime "traded_at"
+    t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "status", default: "open", null: false
-    t.index ["user_id"], name: "index_products_on_user_id"
+    t.index ["buyer_id"], name: "index_products_on_buyer_id"
+    t.index ["seller_id"], name: "index_products_on_seller_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -42,8 +45,6 @@ ActiveRecord::Schema.define(version: 2019_07_22_130932) do
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.string "name"
-    t.string "nickname"
-    t.string "image"
     t.string "email"
     t.json "tokens"
     t.datetime "created_at", null: false
@@ -53,5 +54,6 @@ ActiveRecord::Schema.define(version: 2019_07_22_130932) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
-  add_foreign_key "products", "users"
+  add_foreign_key "products", "users", column: "buyer_id"
+  add_foreign_key "products", "users", column: "seller_id"
 end
