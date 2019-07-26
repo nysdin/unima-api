@@ -4,7 +4,8 @@ class Product < ApplicationRecord
     validates :state, presence: true, inclusion: { in: %w(new almost_new almost_old old) }
     validates :status, presence: true, inclusion: { in: %w(open trade close) }
 
-    belongs_to :user
+    belongs_to :seller, class_name: 'User'
+    belongs_to :buyer, class_name: 'User'
     belongs_to :category
 
 end
