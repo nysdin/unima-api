@@ -1,5 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
-    before_action :authenticate_api_user!, only: [:create, :update, :destroy]
+    before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete]
     before_action :correct_user, only: [:update, :destroy]
 
     def index 
@@ -19,12 +19,9 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def create 
-        
-        binding.pry
-        
         @category = Category.find_by(name: category_params[:category])
         @product = current_api_user.sell_products.build(product_params)
-        @product.category_id = @category.id
+        @product.category_id = @category.id if @category
 
         if @product.save 
             render json: @product, status: :created
@@ -47,6 +44,24 @@ class Api::V1::ProductsController < ApplicationController
         else
             head :internal_server_error
         end
+    end
+
+    def trade
+        @product = Product.find_by(id: params[:id])
+        if @product.update_attributes(buyer_id: current_api_user.id, status: "trade", traded_at: Time.zone.now)
+            render json: @product
+        else
+            render json: @product.errors, status: :unprocessable_entity
+        end
+    end
+
+    def complete
+        @product = Product.find_by(id: params[:id])
+        if @product.update_attributes(status: "close", closed_at: Time.zone.now)
+            head :ok
+        else
+            render json: @product.errors, status: :unprocessable_entity
+        end 
     end
 
     private 
