@@ -19,7 +19,12 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def create 
-        @product = current_api_user.products.build(product_params)
+        
+        binding.pry
+        
+        @category = Category.find_by(name: category_params[:category])
+        @product = current_api_user.sell_products.build(product_params)
+        @product.category_id = @category.id
 
         if @product.save 
             render json: @product, status: :created
@@ -47,7 +52,11 @@ class Api::V1::ProductsController < ApplicationController
     private 
 
         def product_params 
-            params.permit(:name, :description, :price, :category)
+            params.permit(:name, :description, :price, :state)
+        end
+
+        def category_params
+            params.permit(:category)
         end
 
         def correct_user 
