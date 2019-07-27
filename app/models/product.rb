@@ -7,5 +7,7 @@ class Product < ApplicationRecord
     belongs_to :seller, class_name: 'User'
     belongs_to :buyer, class_name: 'User', optional: true
     belongs_to :category
+    has_many :likes, dependent: :destroy
+    has_many :liked_users, through: :likes, source: :user
 
 end
