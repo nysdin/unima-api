@@ -5,7 +5,7 @@ class Product < ApplicationRecord
     validates :status, presence: true, inclusion: { in: %w(open trade close) }
 
     belongs_to :seller, class_name: 'User'
-    belongs_to :buyer, class_name: 'User'
+    belongs_to :buyer, class_name: 'User', optional: true
     belongs_to :category
 
 end

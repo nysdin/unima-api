@@ -65,6 +65,5 @@ ActiveRecord::Schema.define(version: 2019_07_26_085327) do
   end
 
   add_foreign_key "products", "categories"
-  add_foreign_key "products", "users", column: "buyer_id"
   add_foreign_key "products", "users", column: "seller_id"
 end

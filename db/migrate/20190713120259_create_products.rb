@@ -14,7 +14,6 @@ class CreateProducts < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
-    add_foreign_key :products, :users, column: :buyer_id
     add_foreign_key :products, :users, column: :seller_id
   end
 end
