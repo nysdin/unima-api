@@ -19,4 +19,8 @@ class User < ActiveRecord::Base
   def liking?(product)
     like_products.include?(product)
   end
+  
+  def unlike(product)
+    likes.find_by(product_id: product.id).destroy
+  end
 end

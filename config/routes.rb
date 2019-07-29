@@ -9,10 +9,9 @@ Rails.application.routes.draw do
     namespace :v1 do 
       resources :products do
         member do
-          post :trade
-          post :complete
+          post :trade, :complete
         end
-        resources :likes, only: [:create, :destroy]
+        resource :likes, only: [:create, :destroy]
       end
     end
   end
