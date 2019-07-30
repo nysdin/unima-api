@@ -1,5 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
-    before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete]
+    before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete, :trading]
     before_action :correct_user, only: [:update, :destroy]
 
     def index 
@@ -10,9 +10,10 @@ class Api::V1::ProductsController < ApplicationController
 
     def show
         @product = Product.find_by(id: params[:id])
+        like = current_api_user&.liking?(@product)
         
         if @product
-            render json: @product
+            render json: { like: like, product: @product }
         else
             head :not_found 
         end
@@ -78,4 +79,5 @@ class Api::V1::ProductsController < ApplicationController
             @product = current_api_user.products.find_by(id: params[:id])
             head :forbidden if @product.nil?
         end
+
 end

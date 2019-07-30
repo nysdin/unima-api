@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :products do
         member do
           post :trade, :complete
+          get '/trade', to: 'products#trading'
         end
         resource :likes, only: [:create, :destroy]
       end
