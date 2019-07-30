@@ -87,12 +87,12 @@ class Api::V1::ProductsController < ApplicationController
 
         def trading_user
             @product = Product.find_by(id: params[:id])
-            haed :forbidden if current_api_user == @product.buyer || current_api_user == @product.seller
+            haed :forbidden unless current_api_user == @product.buyer || current_api_user == @product.seller
         end
 
         def buyer_user
             @product = Product.find_by(id: params[:id])
-            head :forbidden if current_api_user == @product.buyer
+            head :forbidden unless current_api_user == @product.buyer
         end
 
 end
