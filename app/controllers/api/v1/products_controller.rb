@@ -59,7 +59,6 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def complete
-        @product = Product.find_by(id: params[:id])
         if @product.update_attributes(status: "close", closed_at: Time.zone.now)
             head :ok
         else
@@ -92,7 +91,7 @@ class Api::V1::ProductsController < ApplicationController
         end
 
         def buyer_user
-            @product = Product.find_by(id: parasm[:id])
+            @product = Product.find_by(id: params[:id])
             head :forbidden if current_api_user == @product.buyer
         end
 
