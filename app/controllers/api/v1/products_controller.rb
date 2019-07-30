@@ -15,7 +15,7 @@ class Api::V1::ProductsController < ApplicationController
         like = current_api_user&.liking?(@product)
         
         if @product
-            render json: { like: like, product: @product }
+            render json: { like: like, product: @product.as_json(include: {seller: { only: :name }}) }
         else
             head :not_found 
         end
