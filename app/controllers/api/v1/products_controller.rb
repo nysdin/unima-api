@@ -1,6 +1,8 @@
 class Api::V1::ProductsController < ApplicationController
     before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete, :trading]
     before_action :correct_user, only: [:update, :destroy]
+    before_action :trading_user, only: [:trading]
+    before_action :buyer_user, only: [:complete]
 
     def index 
         @products = Product.all
@@ -65,6 +67,10 @@ class Api::V1::ProductsController < ApplicationController
         end 
     end
 
+    def trading
+        render json: @product
+    end
+
     private 
 
         def product_params 
@@ -78,6 +84,16 @@ class Api::V1::ProductsController < ApplicationController
         def correct_user 
             @product = current_api_user.products.find_by(id: params[:id])
             head :forbidden if @product.nil?
+        end
+
+        def trading_user
+            @product = Product.find_by(id: params[:id])
+            haed :forbidden if current_api_user == @product.buyer || current_api_user == @product.seller
+        end
+
+        def buyer_user
+            @product = Product.find_by(id: parasm[:id])
+            head :forbidden if current_api_user == @product.buyer
         end
 
 end
