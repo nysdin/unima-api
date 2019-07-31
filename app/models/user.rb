@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   has_many :like_products, through: :likes, source: :product
 
   def like(product)
-    like_products << product
+    likes.create(product_id: product.id)
   end
 
   def liking?(product)
