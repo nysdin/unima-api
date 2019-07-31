@@ -1,6 +1,7 @@
 class Api::V1::ProductsController < ApplicationController
     before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete, :trading]
     before_action :correct_user, only: [:update, :destroy]
+    before_action :trading_or_close_product, only: [:update]
     before_action :trading_user, only: [:trading]
     before_action :buyer_user, only: [:complete]
 
@@ -81,8 +82,8 @@ class Api::V1::ProductsController < ApplicationController
         end
 
         def correct_user 
-            @product = current_api_user.products.find_by(id: params[:id])
-            head :forbidden if @product.nil?
+            @product = Product.find_by(id: params[:id])
+            head :forbidden if current_api_user == @product.seller
         end
 
         def trading_user
@@ -93,6 +94,11 @@ class Api::V1::ProductsController < ApplicationController
         def buyer_user
             @product = Product.find_by(id: params[:id])
             head :forbidden unless current_api_user == @product.buyer
+        end
+
+        def trading_or_close_product
+            @product = Product.find_by(id: params[:id])
+            head :forbidden if @product.status == "trade" || @product.status == "close"
         end
 
 end
