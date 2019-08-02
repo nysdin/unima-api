@@ -1,7 +1,7 @@
 class Api::V1::CommentsController < ApplicationController
     before_action :authenticate_api_user!
-    before_actin :correct_user, only: [:destroy]
     before_action :set_product
+    before_action :correct_user, only: [:destroy]
     
     def create
         @comment = current_api_user.comments.build(comment_params)
@@ -14,6 +14,12 @@ class Api::V1::CommentsController < ApplicationController
     end
 
     def destroy
+        @comment = Comment.find_by(id: params[:id])
+        if @comment.destroy
+            render json: @comment
+        else
+            head :unprocessable_entity
+        end
     end
 
     private
