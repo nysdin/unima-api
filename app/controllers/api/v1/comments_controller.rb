@@ -8,7 +8,7 @@ class Api::V1::CommentsController < ApplicationController
         if @comment.save
             render json: @product.comments
         else
-            render json: :unprocessable_entity
+            head :unprocessable_entity
         end
     end
 
