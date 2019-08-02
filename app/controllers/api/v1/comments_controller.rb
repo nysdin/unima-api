@@ -1,5 +1,6 @@
 class Api::V1::CommentsController < ApplicationController
     before_action :authenticate_api_user!
+    before_actin :correct_user, only: [:destroy]
     before_action :set_product
     
     def create
@@ -25,4 +26,9 @@ class Api::V1::CommentsController < ApplicationController
             @product = Product.find_by(id: params[:product_id])
             head :not_found unless @product
         end
+
+        def correct_user
+            head :forbidden unless current_api_user == @product.seller
+        end
+
 end
