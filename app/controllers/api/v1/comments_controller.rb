@@ -1,6 +1,7 @@
 class Api::V1::CommentsController < ApplicationController
     before_action :authenticate_api_user!
     before_action :set_product
+    before_action :correct_product_status, only: [:create]
     before_action :correct_user, only: [:destroy]
     
     def create
@@ -35,6 +36,10 @@ class Api::V1::CommentsController < ApplicationController
 
         def correct_user
             head :forbidden unless current_api_user == @product.seller
+        end
+
+        def correct_product_status
+            head :forbidden unless @product.status == "open"
         end
 
 end
