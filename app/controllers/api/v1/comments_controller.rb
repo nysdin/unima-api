@@ -6,7 +6,7 @@ class Api::V1::CommentsController < ApplicationController
         @comment = current_api_user.comments.build(comment_params)
         @comment.product_id = @product.id
         if @comment.save
-            render json: @product.comments
+            render json: { comments: @comment.as_json(include: { user: {only: [:id, :name]} }) }
         else
             head :unprocessable_entity
         end
