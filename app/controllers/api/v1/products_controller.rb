@@ -51,7 +51,8 @@ class Api::V1::ProductsController < ApplicationController
             head :internal_server_error
         end
     end
-
+    
+    #商品の取引を開始
     def trade
         @product = Product.find_by(id: params[:id])
         if @product.update_attributes(buyer_id: current_api_user.id, status: "trade", traded_at: Time.zone.now)
@@ -61,6 +62,7 @@ class Api::V1::ProductsController < ApplicationController
         end
     end
 
+    #取引を完了
     def complete
         if @product.update_attributes(status: "close", closed_at: Time.zone.now)
             head :ok
@@ -69,6 +71,7 @@ class Api::V1::ProductsController < ApplicationController
         end 
     end
 
+    #取引中の商品を返す
     def trading
         render json: @product
     end
