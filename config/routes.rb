@@ -15,6 +15,11 @@ Rails.application.routes.draw do
         resource :likes, only: [:create, :destroy]
         resources :comments, only: [:create, :destroy]
       end
+
+      scope '/user' do
+        get '/sell', to: 'users#sell'
+        get'/purchase', to: 'users#purchase'
+      end
     end
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
