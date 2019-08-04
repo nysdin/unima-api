@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       end
 
       scope '/user' do
+        get '/like', to: 'users#like'
         get '/sell', to: 'users#sell'
         get'/purchase', to: 'users#purchase'
       end

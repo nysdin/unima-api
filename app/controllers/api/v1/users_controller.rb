@@ -10,4 +10,9 @@ class Api::V1::UsersController < ApplicationController
         @products = current_api_user.buy_products
         render json: @products
     end
+
+    def like
+        @products = current_api_user.like_products
+        render json: @products
+    end
 end
