@@ -38,6 +38,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[5.2]
       ## User Info
       t.string :name
       t.string :email
+      t.string :avatar
 
       ## Tokens
       t.json :tokens
