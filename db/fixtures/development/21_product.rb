@@ -8,6 +8,7 @@
         s.status = "open"
         s.seller_id = 1
         s.category_id = 2
+        s.images = [Rails.root.join("db/fixtures/test.png").open]
     end
 end
 
@@ -20,4 +21,5 @@ Product.seed do |s|
     s.status = "open"
     s.seller_id = 2
     s.category_id = 1
+    s.images = [Rails.root.join("db/fixtures/test.png").open]
 end
