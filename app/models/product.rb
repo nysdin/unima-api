@@ -2,7 +2,7 @@ class Product < ApplicationRecord
     mount_uploaders :images, ImageUploader
     validates :name, presence: true, length: { in: 1..255 }
     validates :price, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-    validates :state, presence: true, inclusion: { in: %w(new almost_new almost_old old) }
+    validates :state, presence: true, inclusion: { in: %w(新品、未使用 目立った傷や汚れなし やや傷れや汚れあり 全体的に状態が悪い) }
     validates :status, presence: true, inclusion: { in: %w(open trade close) }
 
     belongs_to :seller, class_name: 'User'
