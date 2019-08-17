@@ -1,7 +1,7 @@
-general = Category.create(:name => "general")
+general = Category.create(:name => "一般")
 
-science = general.children.create(:name => "science")
-humanity = general.children.create(:name => "humanity")
+science = general.children.create(:name => "理系")
+humanity = general.children.create(:name => "文系")
 
 Category.seed do |s|
     s.id = 1
