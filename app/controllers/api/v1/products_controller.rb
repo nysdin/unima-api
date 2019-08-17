@@ -17,7 +17,7 @@ class Api::V1::ProductsController < ApplicationController
         like = current_api_user&.liking?(@product)
         
         if @product
-            render json: { like: like, product: @product.as_json(include: {seller: { only: :name }}),
+            render json: { like: like, product: @product.as_json(include: {seller: { only: [:name, :avatar] }}),
                             comments: @comments.as_json(include: {user: {only: [:name, :id]}}) } 
         else
             head :not_found 
@@ -79,7 +79,7 @@ class Api::V1::ProductsController < ApplicationController
     private 
 
         def product_params 
-            params.permit(:name, :description, :price, :state)
+            params.permit(:name, :description, :price, :state, { images: [] })
         end
 
         def category_params
