@@ -13,10 +13,11 @@ class Api::V1::ProductsController < ApplicationController
 
     def show
         @product = Product.find_by(id: params[:id])
-        @comments = @product.comments
-        like = current_api_user&.liking?(@product)
         
         if @product
+            @comments = @product.comments
+            like = current_api_user&.liking?(@product)
+            
             render json: {
                 like: like,
                 product: @product.as_json(include: {
@@ -28,6 +29,10 @@ class Api::V1::ProductsController < ApplicationController
         else
             head :not_found 
         end
+    end
+
+    def search
+        head :not_found
     end
 
     def create 

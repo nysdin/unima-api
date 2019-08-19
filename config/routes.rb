@@ -12,6 +12,9 @@ Rails.application.routes.draw do
           post :trade, :complete
           get '/trade', to: 'products#trading'
         end
+        collection do
+          get '/search', to: 'products#search'
+        end
         resource :likes, only: [:create, :destroy]
         resources :comments, only: [:create, :destroy]
       end
