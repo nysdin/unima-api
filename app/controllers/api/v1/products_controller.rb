@@ -17,7 +17,7 @@ class Api::V1::ProductsController < ApplicationController
         if @product
             @comments = @product.comments
             like = current_api_user&.liking?(@product)
-            
+
             render json: {
                 like: like,
                 product: @product.as_json(include: {
@@ -32,7 +32,9 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def search
-        head :not_found
+        @q = Product.ransack(params[:q])
+        @products = @q.result
+        render json: @products
     end
 
     def create 
@@ -99,7 +101,7 @@ class Api::V1::ProductsController < ApplicationController
 
         def correct_user 
             @product = Product.find_by(id: params[:id])
-            head :forbidden if current_api_user == @product.seller
+            head :forbidden if current_api_user == !@product.seller
         end
 
         def trading_user
