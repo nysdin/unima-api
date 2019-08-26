@@ -24,7 +24,7 @@ class Api::V1::ProductsController < ApplicationController
                     seller: { only: [:name, :avatar]},
                     category: { methods: :path }
                 }),
-                comments: @comments.as_json(include: { user: {only: [:name, :id]}})
+                comments: @comments.as_json(include: { user: {only: [:name, :id, :avatar]}})
             }
         else
             head :not_found 
