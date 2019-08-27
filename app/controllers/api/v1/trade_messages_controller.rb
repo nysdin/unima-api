@@ -3,9 +3,22 @@ class Api::V1::TradeMessagesController < ApplicationController
     before_action :set_product
 
     def create
+        @message = current_api_user.trade_messages.build(trade_messages_params)
+        @message.product_id = @product.id
+        if @message.save
+            render json: { message: @message.as_json(include: { user: {only: [:id, :name, :avatar]} }) }
+        else
+            head :unprocessable_entity
+        end
     end
 
     def destroy
+        @message = TradeMessage.find_by(id: params[:id])
+        if @message.destroy
+            render json: @message
+        else
+            head :unprocessable_entity
+        end
     end
 
     private
