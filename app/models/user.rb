@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_many :likes, dependent: :destroy
   has_many :like_products, through: :likes, source: :product
   has_many :comments, dependent: :destroy
+  has_many :trade_messages, dependent: :destroy
 
   def like(product)
     likes.create(product_id: product.id)
