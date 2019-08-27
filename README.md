@@ -12,8 +12,10 @@ Things you may want to cover:
 * Configuration
 
 * Database creation
+bin/rails db:migrate
 
 * Database initialization
+bin/rails db:seed_fu
 
 * How to run the test suite
 
