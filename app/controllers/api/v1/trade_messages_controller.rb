@@ -7,4 +7,15 @@ class Api::V1::TradeMessagesController < ApplicationController
 
     def destroy
     end
+
+    private
+
+        def trade_messages_params
+            params.permit(:content)
+        end
+
+        def set_product
+            @product = Product.find_by(id: params[:product_id])
+            head :not_found unless @product
+        end
 end
