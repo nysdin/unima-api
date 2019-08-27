@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         end
         resource :likes, only: [:create, :destroy]
         resources :comments, only: [:create, :destroy]
+        resources :trade_messages, only: [:create, :destroy]
       end
 
       scope '/user' do
