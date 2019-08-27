@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_14_072148) do
+ActiveRecord::Schema.define(version: 2019_08_27_020406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,16 @@ ActiveRecord::Schema.define(version: 2019_08_14_072148) do
     t.index ["seller_id"], name: "index_products_on_seller_id"
   end
 
+  create_table "trade_messages", force: :cascade do |t|
+    t.string "content", null: false
+    t.bigint "user_id"
+    t.bigint "product_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_trade_messages_on_product_id"
+    t.index ["user_id"], name: "index_trade_messages_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false
     t.string "uid", default: "", null: false
@@ -92,4 +102,5 @@ ActiveRecord::Schema.define(version: 2019_08_14_072148) do
   add_foreign_key "likes", "users"
   add_foreign_key "products", "categories"
   add_foreign_key "products", "users", column: "seller_id"
+  add_foreign_key "trade_messages", "users"
 end
