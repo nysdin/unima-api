@@ -13,15 +13,28 @@ class Api::V1::ProductsController < ApplicationController
 
     def show
         @product = Product.find_by(id: params[:id])
-        @comments = @product.comments
-        like = current_api_user&.liking?(@product)
         
         if @product
-            render json: { like: like, product: @product.as_json(include: {seller: { only: :name }}),
-                            comments: @comments.as_json(include: {user: {only: [:name, :id]}}) } 
+            @comments = @product.comments
+            like = current_api_user&.liking?(@product)
+
+            render json: {
+                like: like,
+                product: @product.as_json(include: {
+                    seller: { only: [:name, :avatar]},
+                    category: { methods: :path }
+                }),
+                comments: @comments.as_json(include: { user: {only: [:name, :id, :avatar]}})
+            }
         else
             head :not_found 
         end
+    end
+
+    def search
+        @q = Product.ransack(params[:q])
+        @products = @q.result
+        render json: @products
     end
 
     def create 
@@ -73,29 +86,46 @@ class Api::V1::ProductsController < ApplicationController
 
     #取引中の商品を返す
     def trading
-        render json: @product
+        if @product
+            @messages = @product.trade_messages
+            like = current_api_user&.liking?(@product)
+
+            render json: {
+                like: like,
+                product: @product.as_json(include: {
+                    seller: { only: [:name, :avatar]},
+                    category: { methods: :path }
+                }),
+                messages: @messages.as_json(include: { user: {only: [:name, :id, :avatar]}})
+            }
+        else
+            head :not_found 
+        end
     end
 
     private 
 
         def product_params 
-            params.permit(:name, :description, :price, :state)
+            params.permit(:name, :description, :price, :state, { images: [] })
         end
 
         def category_params
             params.permit(:category)
         end
 
+        #売り手かどうか
         def correct_user 
             @product = Product.find_by(id: params[:id])
-            head :forbidden if current_api_user == @product.seller
+            head :forbidden if current_api_user == !@product.seller
         end
 
+        #取引に関わるユーザーかどうか
         def trading_user
             @product = Product.find_by(id: params[:id])
             haed :forbidden unless current_api_user == @product.buyer || current_api_user == @product.seller
         end
 
+        #買い手かどうか
         def buyer_user
             @product = Product.find_by(id: params[:id])
             head :forbidden unless current_api_user == @product.buyer
