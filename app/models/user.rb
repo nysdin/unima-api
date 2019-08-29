@@ -15,6 +15,10 @@ class User < ActiveRecord::Base
   has_many :like_products, through: :likes, source: :product
   has_many :comments, dependent: :destroy
   has_many :trade_messages, dependent: :destroy
+  has_many :active_relationships, class_name: 'Relationship', foreign_key: 'follower_id', dependent: :destroy
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :passive_relationships, class_name: 'Relationship', foreign_key: 'followed_id', dependent: :destroy
+  has_many :followers, through: :passive_relationships, source: :follower
 
   def like(product)
     likes.create(product_id: product.id)
@@ -26,5 +30,17 @@ class User < ActiveRecord::Base
   
   def unlike(product)
     likes.find_by(product_id: product.id).destroy
+  end
+
+  def follow(other_user)
+    following << other_user
+  end
+
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy
+  end
+
+  def following?(other_user)
+    following.include?(other_user)
   end
 end
