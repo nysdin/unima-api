@@ -27,8 +27,9 @@ Rails.application.routes.draw do
         get '/sell', to: 'users#sell'
         get'/purchase', to: 'users#purchase'
         post '/bank', to: 'users#bank'
-        post '/cregit', to: 'users#cregit'
       end
+
+      resource :card
     end
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
