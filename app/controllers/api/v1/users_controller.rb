@@ -19,11 +19,37 @@ class Api::V1::UsersController < ApplicationController
     def bank
         token = current_api_user.stripe_account_id
         head :forbidden and return if token.nil?
-        
+
         begin 
             Stripe::Account.update(token, {external_account: params[:stripe_bank_token]})
         rescue => e
             head :bad_request and return
+        end
+
+        head :ok
+    end
+
+    def cregit
+        token = current_api_user.stripe_customer_id
+
+        if token.nil?
+            begin
+                cutomer = Stripe::Customer.create({
+                    source: params[:stripe_cregit_token],
+                    email: current_api_user.email,
+                })
+                current_api_user.stripe_customer_id = cutomer.id
+            rescue => e
+                head :bad_request and return
+            end
+        else
+            begin
+                Stripe::Customer.update(token, {
+                    source: params[:stripe_cregit_token],
+                })
+            rescue => e
+                head :bad_request and return
+            end
         end
 
         head :ok
