@@ -27,6 +27,7 @@ Rails.application.routes.draw do
         get '/sell', to: 'users#sell'
         get'/purchase', to: 'users#purchase'
         post '/bank', to: 'users#bank'
+        post '/cregit', to: 'users#cregit'
       end
     end
   end
