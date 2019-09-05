@@ -4,7 +4,7 @@ class Api::V1::CardsController < ApplicationController
     def show
     end
 
-    def create
+    def update
         token = current_api_user.stripe_customer_id
 
         if token.nil?
@@ -28,9 +28,6 @@ class Api::V1::CardsController < ApplicationController
         end
 
         head :ok
-    end
-
-    def update
     end 
 
     def destroy
