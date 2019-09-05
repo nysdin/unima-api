@@ -2,12 +2,12 @@ class Api::V1::CardsController < ApplicationController
     before_action :authenticate_api_user!
 
     def show
-        token = current_api_user.stripe_customer_id
-        if token.nil?
+        customer_id = current_api_user.stripe_customer_id
+        if customer_id.nil?
             head :ok
         else
             begin
-                customer = Stripe::Customer.retrieve(token)
+                customer = Stripe::Customer.retrieve(customer_id)
                 data = customer[:sources][:data][0]
                 last4 = data[:last4]
                 exp_month = data[:exp_month]
@@ -22,9 +22,8 @@ class Api::V1::CardsController < ApplicationController
     end
 
     def update
-        token = current_api_user.stripe_customer_id
-
-        if token.nil?
+        customer_id = current_api_user.stripe_customer_id
+        if customer_id.nil?
             begin
                 cutomer = Stripe::Customer.create({
                     source: params[:stripe_cregit_token],
@@ -36,17 +35,33 @@ class Api::V1::CardsController < ApplicationController
             end
         else
             begin
-                Stripe::Customer.update(token, {
+                Stripe::Customer.update(customer_id, {
                     source: params[:stripe_cregit_token],
                 })
             rescue => e
                 head :bad_request and return
             end
         end
-
         head :ok
     end 
 
     def destroy
+        customer_id = current_api_user.stripe_customer_id
+        
+        if customer_id.nil?
+            head :not_found
+        else
+            begin
+                customer = Stripe::Customer.retrieve(customer_id)
+                card_id = customer[:sources][:data][0][:id]
+                Stripe::Customer.delete_source(
+                    customer_id,
+                    card_id,
+                )
+                head :ok
+            rescue => e
+                head :bad_request and return
+            end
+        end
     end
 end
