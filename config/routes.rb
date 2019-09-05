@@ -26,7 +26,6 @@ Rails.application.routes.draw do
         get '/like', to: 'users#like'
         get '/sell', to: 'users#sell'
         get'/purchase', to: 'users#purchase'
-        post '/bank', to: 'users#bank'
       end
 
       resource :card, except: [:create]
