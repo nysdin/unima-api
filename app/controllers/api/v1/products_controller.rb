@@ -1,5 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
-    before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete, :trading, :confirmation]
+    before_action :authenticate_api_user!, except: [:indxe, :show, :search]
     before_action :correct_user, only: [:update, :destroy]
     before_action :trading_or_close_product, only: [:update]
     before_action :trading_user, only: [:trading]
@@ -68,6 +68,8 @@ class Api::V1::ProductsController < ApplicationController
     #商品の取引を開始
     def trade
         @product = Product.find_by(id: params[:id])
+
+        head :forbidden and return if current_api_user == @product.seller
         if @product.update_attributes(buyer_id: current_api_user.id, status: "trade", traded_at: Time.zone.now)
             render json: @product
         else
