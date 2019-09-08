@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         member do
           post :trade, :complete
           get '/trade', to: 'products#trading'
+          get :confirmation
         end
         collection do
           get '/search', to: 'products#search'
