@@ -1,5 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
-    before_action :authenticate_api_user!, except: [:indxe, :show, :search]
+    before_action :authenticate_api_user!, except: [:index, :show, :search]
     before_action :correct_user, only: [:update, :destroy]
     before_action :trading_or_close_product, only: [:update]
     before_action :trading_user, only: [:trading]
