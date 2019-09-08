@@ -5,7 +5,7 @@ class Api::V1::BankAccountsController < ApplicationController
         account_id = current_api_user.stripe_account_id
 
         if account_id.nil?
-            head :ok
+            head :not_found
         else
             begin
                 account = Stripe::Account.retrieve(account_id)
