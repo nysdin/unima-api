@@ -1,5 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
-    before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete, :trading]
+    before_action :authenticate_api_user!, only: [:create, :update, :destroy, :trade, :complete, :trading, :confirmation]
     before_action :correct_user, only: [:update, :destroy]
     before_action :trading_or_close_product, only: [:update]
     before_action :trading_user, only: [:trading]
@@ -103,6 +103,34 @@ class Api::V1::ProductsController < ApplicationController
         end
     end
 
+    #購入手続き画面の情報を出力
+    def confirmation
+        @product = Product.find_by(id: params[:id])
+
+        if @product
+            customer_id = current_api_user.stripe_customer_id
+
+            if customer_id.nil?
+                render json: { product: @product }
+            else
+                begin
+                    customer = Stripe::Customer.retrieve(customer_id)
+                    data = customer[:sources][:data][0]
+                    last4 = data[:last4]
+                    exp_month = data[:exp_month]
+                    exp_year = data[:exp_year]
+                    brand = data[:brand]
+                    cregit = {last4: last4, exp_month: exp_month, exp_year: exp_year, brand: brand}
+                    render json: { product: @product, card: cregit }
+                rescue => e
+                    head :bad_request
+                end
+            end
+        else
+            head :not_found
+        end
+    end
+
     private 
 
         def product_params 
@@ -131,6 +159,7 @@ class Api::V1::ProductsController < ApplicationController
             head :forbidden unless current_api_user == @product.buyer
         end
 
+        #商品が公開中でなければダメ
         def trading_or_close_product
             @product = Product.find_by(id: params[:id])
             head :forbidden if @product.status == "trade" || @product.status == "close"
