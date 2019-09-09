@@ -1,9 +1,7 @@
 class Api::V1::ProductsController < ApplicationController
     before_action :authenticate_api_user!, except: [:index, :show, :search]
+    before_action :set_product, except: [:index, :search, :create]
     before_action :correct_user, only: [:update, :destroy]
-    before_action :trading_or_close_product, only: [:update]
-    before_action :trading_user, only: [:trading]
-    before_action :buyer_user, only: [:complete]
 
     def index 
         @products = Product.where(status: 'open')
@@ -12,8 +10,6 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def show
-        @product = Product.find_by(id: params[:id])
-        
         if @product
             @comments = @product.comments
             like = current_api_user&.liking?(@product)
@@ -50,6 +46,7 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def update
+        head :forbidden and return if @product.status == "trade" || @product.status == "close"
         if @product.update(product_params)
             render json: @product
         else
@@ -61,15 +58,22 @@ class Api::V1::ProductsController < ApplicationController
         if @product.destroy
             render json: @product
         else
-            head :internal_server_error
+            head :unprocessable_entity	
         end
     end
     
     #商品の取引を開始
     def trade
-        @product = Product.find_by(id: params[:id])
+        begin
+            token = Stripe::Customer.retrieve(current_api_user.stripe_customer_id)
+        rescue => e
+            head :bad_request and return
+        end
 
-        head :forbidden and return if current_api_user == @product.seller
+        if current_api_user == @product.seller || !(@product.status == "open")
+            head :forbidden and return
+        end
+
         if @product.update_attributes(buyer_id: current_api_user.id, status: "trade", traded_at: Time.zone.now)
             render json: @product
         else
@@ -80,6 +84,18 @@ class Api::V1::ProductsController < ApplicationController
     #取引を完了
     def complete
         seller = @product.seller
+
+        begin
+            account_token = Stripe::Account.retrieve(seller.stripe_account_id)
+            customer_token = Stripe::Customer.retrieve(current_api_user.stripe_account_id)
+        rescue => e
+            head :bad_request
+        end
+        
+        unless current_api_user == @product.buyer && @product.status == "trade"
+            head :forbidden
+        end
+
         begin
             Stripe::Charge.create({
                 amount: @product.price,
@@ -102,6 +118,8 @@ class Api::V1::ProductsController < ApplicationController
 
     #取引中の商品を返す
     def trading
+        head :forbidden unless current_api_user == @product.buyer || current_api_user == @product.seller
+
         if @product
             @messages = @product.trade_messages
             like = current_api_user&.liking?(@product)
@@ -121,8 +139,6 @@ class Api::V1::ProductsController < ApplicationController
 
     #購入手続き画面の情報を出力
     def confirmation
-        @product = Product.find_by(id: params[:id])
-
         if @product
             customer_id = current_api_user.stripe_customer_id
 
@@ -157,28 +173,13 @@ class Api::V1::ProductsController < ApplicationController
             params.permit(:category)
         end
 
+        def set_product
+            @product = Product.find_by(id: params[:id])
+        end
+
         #売り手かどうか
         def correct_user 
-            @product = Product.find_by(id: params[:id])
             head :forbidden if current_api_user == !@product.seller
-        end
-
-        #取引に関わるユーザーかどうか
-        def trading_user
-            @product = Product.find_by(id: params[:id])
-            haed :forbidden unless current_api_user == @product.buyer || current_api_user == @product.seller
-        end
-
-        #買い手かどうか
-        def buyer_user
-            @product = Product.find_by(id: params[:id])
-            head :forbidden unless current_api_user == @product.buyer
-        end
-
-        #商品が公開中でなければダメ
-        def trading_or_close_product
-            @product = Product.find_by(id: params[:id])
-            head :forbidden if @product.status == "trade" || @product.status == "close"
         end
 
 end
