@@ -6,7 +6,7 @@ class Api::V1::ProductsController < ApplicationController
     before_action :buyer_user, only: [:complete]
 
     def index 
-        @products = Product.all
+        @products = Product.where(status: 'open')
 
         render json: @products
     end
