@@ -19,11 +19,11 @@ class Api::V1::CardsController < ApplicationController
         customer_id = current_api_user.stripe_customer_id
         if customer_id.nil?
             begin
-                cutomer = Stripe::Customer.create({
+                customer = Stripe::Customer.create({
                     source: params[:stripe_cregit_token],
                     email: current_api_user.email,
                 })
-                if current_api_user.update_attributes(stripe_customer_id: cutomer.id)
+                if current_api_user.update_attributes(stripe_customer_id: customer.id)
                     render_card(customer)
                 else
                     head :unprocessable_entity
