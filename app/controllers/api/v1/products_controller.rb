@@ -34,6 +34,14 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def create 
+        head :forbidden and return if current_api_user.stripe_account_id.nil?
+
+        begin
+            account = Stripe::Account.retrieve(current_api_user.stripe_account_id)
+        rescue => e
+            head :bad_request
+        end
+
         @category = Category.find_by(name: category_params[:category])
         @product = current_api_user.sell_products.build(product_params)
         @product.category_id = @category.id if @category
