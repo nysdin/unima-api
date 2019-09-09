@@ -79,11 +79,25 @@ class Api::V1::ProductsController < ApplicationController
 
     #取引を完了
     def complete
-        if @product.update_attributes(status: "close", closed_at: Time.zone.now)
-            head :ok
-        else
-            render json: @product.errors, status: :unprocessable_entity
-        end 
+        seller = @product.seller
+        begin
+            Stripe::Charge.create({
+                amount: @product.price,
+                currency: "jpy",
+                customer: current_api_user.stripe_customer_id,
+                transfer_data: {
+                    amount: (@product.price * 0.9).to_i,
+                    destination: seller.stripe_account_id,
+                }
+            })
+            if @product.update_attributes(status: "close", closed_at: Time.zone.now)
+                head :ok
+            else
+                render json: @product.errors, status: :unprocessable_entity
+            end
+        rescue => e
+            head :bad_request
+        end
     end
 
     #取引中の商品を返す
