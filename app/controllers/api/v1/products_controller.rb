@@ -39,7 +39,7 @@ class Api::V1::ProductsController < ApplicationController
         begin
             account = Stripe::Account.retrieve(current_api_user.stripe_account_id)
         rescue => e
-            head :bad_request
+            head :bad_request and return
         end
 
         @category = Category.find_by(name: category_params[:category])
