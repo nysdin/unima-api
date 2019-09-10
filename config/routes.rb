@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   namespace :api do 
     scope :v1 do 
-      mount_devise_token_auth_for 'User', at: 'auth'
+      mount_devise_token_auth_for 'User', at: 'auth', controllers: {
+        registrations: 'api/v1/auth/registrations'
+      }
     end
   end
 
@@ -11,6 +13,7 @@ Rails.application.routes.draw do
         member do
           post :trade, :complete
           get '/trade', to: 'products#trading'
+          get :confirmation
         end
         collection do
           get '/search', to: 'products#search'
@@ -25,6 +28,9 @@ Rails.application.routes.draw do
         get '/sell', to: 'users#sell'
         get'/purchase', to: 'users#purchase'
       end
+
+      resource :card, except: [:create]
+      resource :bank_account, except: [:create]
     end
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

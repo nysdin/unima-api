@@ -21,6 +21,8 @@ if ['development', 'test'].include? ENV['RAILS_ENV']
   Dotenv::Railtie.load
 end
 
+Stripe.api_key = ENV['STRIPE_SECRET_API_KEY']
+
 module UnimaApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
