@@ -4,7 +4,7 @@ class Api::V1::CardsController < ApplicationController
     def show
         customer_id = current_api_user.stripe_customer_id
         if customer_id.nil?
-            head :not_found
+            head :ok
         else
             begin
                 customer = Stripe::Customer.retrieve(customer_id)
