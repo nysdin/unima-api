@@ -5,7 +5,7 @@ class Api::V1::BankAccountsController < ApplicationController
         account_id = current_api_user.stripe_account_id
 
         if account_id.nil?
-            head :not_found
+            head :ok
         else
             begin
                 account = Stripe::Account.retrieve(account_id)
@@ -26,9 +26,6 @@ class Api::V1::BankAccountsController < ApplicationController
         rescue => e
             head :bad_request and return
         end
-    end
-
-    def destroy
     end
 
     private
