@@ -21,7 +21,7 @@ if ['development', 'test'].include? ENV['RAILS_ENV']
   Dotenv::Railtie.load
 end
 
-Stripe.api_key = 'sk_test_l6d9CT8rhVwWIVgJQ4yTSxwu003ESqmv05'
+Stripe.api_key = ENV['STRIPE_SECRET_API_KEY']
 
 module UnimaApi
   class Application < Rails::Application
