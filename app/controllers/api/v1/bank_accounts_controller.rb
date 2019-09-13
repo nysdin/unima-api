@@ -9,6 +9,7 @@ class Api::V1::BankAccountsController < ApplicationController
         else
             begin
                 account = Stripe::Account.retrieve(account_id)
+                head :ok and return if account[:external_accounts][:total_count] == 0
                 render_bank_account(account)
             rescue => e
                 head :bad_request and return
