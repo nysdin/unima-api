@@ -44,27 +44,7 @@ class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsCon
             })
             @resource.stripe_account_id = acct.id
         rescue => e
-            head :bad_request and return
-        end
-
-        if params[:stripe_cregit_token].present?
-            begin
-                customer = Stripe::Customer.create({
-                    source: params[:stripe_cregit_token],
-                    email: @resource.email
-                })
-                @resource.stripe_customer_id = customer.id
-            rescue => e
-                head :bad_request and return
-            end
-        end
-
-        if params[:stripe_bank_token].present?
-            begin 
-                Stripe::Account.update(acct.id, {external_account: params[:stripe_bank_token]})
-            rescue => e
-                head :bad_request and return
-            end
+            render json: { errors: ["本人情報の入力に誤りがあります."] }, status: :bad_request and return
         end
 
         unless @resource.present?
@@ -114,10 +94,12 @@ class Api::V1::Auth::RegistrationsController < DeviseTokenAuth::RegistrationsCon
                 update_auth_header
             end
 
-            render_create_success
+            #render_create_success
+            head :created
         else
             clean_up_passwords @resource
-            render_create_error
+            #render_create_error
+            render json: { errors: @resource.errors.full_messages }, status: :unprocessable_entity
         end
     end
 end
