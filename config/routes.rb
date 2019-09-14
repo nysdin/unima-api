@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
       scope '/user' do
         post '/validate', to: 'users#validate_account'
+        get '/address', to: 'users#address'
         get '/like', to: 'users#like'
         get '/sell', to: 'users#sell'
         get'/purchase', to: 'users#purchase'

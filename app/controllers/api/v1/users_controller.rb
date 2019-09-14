@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-    before_action :authenticate_api_user!, except: [:validate_account]
+    before_action :authenticate_api_user!, except: [:validate_account, :address]
 
     def validate_account
         @user = User.new(user_params)
@@ -7,6 +7,21 @@ class Api::V1::UsersController < ApplicationController
             head :ok
         else
             render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity	
+        end
+    end
+
+    def address
+        query = params[:zipcode]
+        uri = URI.parse('http://zipcloud.ibsnet.co.jp/api/search?zipcode=' + query)
+        res = Net::HTTP.start(uri.host, uri.port){ |http| 
+            http.get(uri.request_uri)
+        }
+        
+        if res.code === '200'
+            result = JSON.parse(res.body)
+            render json: result
+        else
+            head :ok
         end
     end
 
