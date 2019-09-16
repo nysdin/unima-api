@@ -6,14 +6,17 @@ class Api::V1::UsersController < ApplicationController
 
         if @user
             if api_user_signed_in? && current_api_user.following?(@user)
-                following = true
+                followed = true
+                following = @user.following
             else
-                following = false
+                followed = following = false
             end
+
             render json: {
                 user: @user.as_json(only: [:id, :name, :avatar]),
                 products: @user.sell_products,
-                following: following
+                followed: followed,
+                following: @user.following
             }
         else
             head :not_found
