@@ -23,6 +23,9 @@ Rails.application.routes.draw do
         resources :trade_messages, only: [:create, :destroy]
       end
 
+      resources :users, only: :show
+      resources :relationships, only: [:create, :destroy]
+      
       scope '/user' do
         post '/validate', to: 'users#validate_account'
         get '/address', to: 'users#address'

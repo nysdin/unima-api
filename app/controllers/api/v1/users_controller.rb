@@ -1,5 +1,27 @@
 class Api::V1::UsersController < ApplicationController
-    before_action :authenticate_api_user!, except: [:validate_account, :address]
+    before_action :authenticate_api_user!, except: [:show, :validate_account, :address]
+
+    def show
+        @user = User.find_by(id: params[:id])
+
+        if @user
+            if api_user_signed_in? && current_api_user.following?(@user)
+                followed = true
+                following = @user.following
+            else
+                followed = following = false
+            end
+
+            render json: {
+                user: @user.as_json(only: [:id, :name, :avatar]),
+                products: @user.sell_products,
+                followed: followed,
+                following: @user.following
+            }
+        else
+            head :not_found
+        end
+    end
 
     def validate_account
         @user = User.new(user_params)
