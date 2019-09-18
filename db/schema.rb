@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 2019_09_17_115153) do
   end
 
   create_table "notifications", force: :cascade do |t|
-    t.string "type", null: false
+    t.string "action", null: false
     t.bigint "sender_id"
     t.bigint "recipient_id"
     t.bigint "product_id"
