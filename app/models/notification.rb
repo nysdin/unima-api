@@ -4,4 +4,6 @@ class Notification < ApplicationRecord
   belongs_to :product
 
   validates :action, presence: true
+
+  default_scope -> { order(created_at: :desc) }
 end
