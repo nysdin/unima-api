@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
+  
   namespace :api do 
     scope :v1 do 
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
-        registrations: 'api/v1/auth/registrations'
+        registrations: 'api/v1/auth/registrations',
+        sessions: 'api/v1/auth/sessions',
+        token_validations: 'api/v1/auth/token_validations'
       }
     end
   end
@@ -32,6 +36,10 @@ Rails.application.routes.draw do
         get '/like', to: 'users#like'
         get '/sell', to: 'users#sell'
         get'/purchase', to: 'users#purchase'
+      end
+
+      scope '/notifications' do
+        post '/check', to: 'notifications#check'
       end
 
       resource :card, except: [:create]
