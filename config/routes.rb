@@ -38,6 +38,10 @@ Rails.application.routes.draw do
         get'/purchase', to: 'users#purchase'
       end
 
+      scope '/notifications' do
+        post '/check', to: 'notifications#check'
+      end
+
       resource :card, except: [:create]
       resource :bank_account, except: [:create]
     end
