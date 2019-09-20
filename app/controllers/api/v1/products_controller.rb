@@ -4,9 +4,9 @@ class Api::V1::ProductsController < ApplicationController
     before_action :correct_user, only: [:update, :destroy]
 
     def index 
-        @products = Product.where(status: 'open')
+        @pagy, @products = pagy(Product.where(status: 'open'))
 
-        render json: @products
+        render json: { products: @products, pagy: pagy_metadata(@pagy)}
     end
 
     def show
