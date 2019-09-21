@@ -4,9 +4,9 @@ class Api::V1::ProductsController < ApplicationController
     before_action :correct_user, only: [:update, :destroy]
 
     def index 
-        @pagy, @products = pagy(Product.where(status: 'open'))
+        @products = Product.where(status: 'open')
 
-        render json: { products: @products, pagy: pagy_metadata(@pagy)}
+        render json: @products
     end
 
     def show
@@ -29,8 +29,8 @@ class Api::V1::ProductsController < ApplicationController
 
     def search
         @q = Product.ransack(params[:q])
-        @products = @q.result
-        render json: @products
+        @pagy, @products = pagy(@q.result)
+        render json: { products: @products, pagy: pagy_metadata(@pagy)}
     end
 
     def create 
