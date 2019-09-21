@@ -58,8 +58,8 @@ class Api::V1::UsersController < ApplicationController
     end
 
     def like
-        @products = current_api_user.like_products
-        render json: @products
+        @pagy, @products = pagy(current_api_user.like_products)
+        render json: { products: @products, pagy: pagy_metadata(@pagy) }
     end
 
     private
