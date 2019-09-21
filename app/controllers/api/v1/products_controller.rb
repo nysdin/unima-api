@@ -29,8 +29,8 @@ class Api::V1::ProductsController < ApplicationController
 
     def search
         @q = Product.ransack(params[:q])
-        @products = @q.result
-        render json: @products
+        @pagy, @products = pagy(@q.result)
+        render json: { products: @products, pagy: pagy_metadata(@pagy)}
     end
 
     def create 
