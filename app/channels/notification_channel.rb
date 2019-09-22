@@ -9,7 +9,7 @@ class NotificationChannel < ApplicationCable::Channel
 
   def notice(data)
     recipient = User.find_by(id: data['recipient_id'])
-    product = User.find_by(id: data['product_id'])
+    product = Product.find_by(id: data['product_id'])
     if recipient && product
       notification = recipient.notifications.build(action: data['action_type'], sender_id: current_user.id, product_id: product.id)
       if notification.save
