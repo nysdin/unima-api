@@ -82,4 +82,7 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  #action cable
+  config.action_cable.url = 'wss://unima-rails-api.herokuapp.com:3000/cable'
 end
