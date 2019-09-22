@@ -27,5 +27,4 @@
 /public/uploads
 /public/images
 .DS_Store
-
-/.env
+.env
